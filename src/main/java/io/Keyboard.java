@@ -2,10 +2,13 @@ package io;
 
 import exception.InvalidInputException;
 
+import java.time.DateTimeException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
-public class Keyboard implements Keypad{
+public class Keyboard implements Keypad {
     private final Scanner scanner = new Scanner(System.in);
     private final Screen screen;
 
@@ -22,7 +25,7 @@ public class Keyboard implements Keypad{
                 var inputString = scanner.next();
                 input = Integer.parseInt(inputString);
             } catch (NumberFormatException e) {
-                screen.displayMessage("Invalid input format. Try again!");
+                screen.displayMessage("Formatul introdus este invalid. Incercati din nou!");
             }
         }
 
@@ -34,13 +37,14 @@ public class Keyboard implements Keypad{
         String input;
         do {
             input = scanner.nextLine().trim();
-            if(isNumeric(input)) {
-                screen.displayMessage("Invalid input. Please enter a text string");
+            if (isNumeric(input)) {
+                screen.displayMessage("Input invalid. Introduceti un string!");
             }
         } while (input.isEmpty());
 
         return input;
     }
+
     private boolean isNumeric(String string) {
         try {
             Integer.parseInt(string);
@@ -50,8 +54,49 @@ public class Keyboard implements Keypad{
         }
     }
 
-    @Override
-    public long getLongInput() {
+    public int getYearInput(String message, int maxYear) {
+        screen.displayMessage(message + ": ");
+        int year = 0;
+
+        do {
+            try {
+                year = getInput();
+                if (isNotValidYear(year)) {
+                    throw new InvalidInputException("Formatul introdus este invalid. Incercati din nou!");
+                }
+            } catch (InvalidInputException e) {
+                screen.displayMessage("Formatul introdus este  invalid. Introduceti un an valid (1930 - 2023)!");
+            }
+        } while (isNotValidYear(year));
+
+        return year;
+    }
+
+    private boolean isNotValidYear(int year) {
+
+        return year <= 1930 || year > 2024;
+    }
+
+    public LocalDate getDateInput(String message) {
+        screen.displayMessage(message + ": ");
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+        LocalDate date = null;
+
+        boolean validInput = false;
+        while(!validInput) {
+            try {
+                String userInput = scanner.nextLine();
+                date = LocalDate.parse(userInput, dateTimeFormatter);
+                validInput = true;
+            } catch (DateTimeException e) {
+                screen.displayMessage("Formatul introdus este invalid. Folositi formatul 'dd.MM.yyyy'");
+            }
+        }
+        return date;
+    }
+
+    public long getLongInput(String message) {
+        screen.displayMessage(message + ": ");
         var input = Long.MIN_VALUE;
 
         while (input == Long.MIN_VALUE) {
@@ -59,15 +104,14 @@ public class Keyboard implements Keypad{
                 var inputString = scanner.next();
                 input = Integer.parseInt(inputString);
             } catch (NumberFormatException e) {
-                screen.displayMessage("Invalid input format. Try again!");
+                screen.displayMessage("Formatul introdus este invalid. Incercati din nou!");
             }
         }
-
         return input;
     }
 
-    @Override
-    public boolean getBooleanInput() {
+    public boolean getBooleanInput(String message) {
+        screen.displayMessage(message + ": ");
         while (true) {
             String input = getStringInput();
             if (input.equalsIgnoreCase("true")) {
@@ -79,8 +123,9 @@ public class Keyboard implements Keypad{
             }
         }
     }
+
     public String capitalizeFirstLetterOfWords(String input) {
-        if(input == null || input.isEmpty()) {
+        if (input == null || input.isEmpty()) {
             return input;
         }
 
@@ -91,27 +136,9 @@ public class Keyboard implements Keypad{
 
         return input;
     }
-    public String getCapitalizedUserInput(String message, boolean needMultipleWords) {
+
+    public String getCapitalizedUserInput(String message) {
         screen.displayMessage(message + ": ");
-
-        String input = "";
-        boolean isValidInput = false;
-
-        while(!isValidInput) {
-            try {
-                input = capitalizeFirstLetterOfWords(getStringInput());
-                String[] words = input.split("\\s+");
-
-                if (!needMultipleWords || (needMultipleWords && words.length >= 2)) {
-                    isValidInput = true;
-                } else {
-                    throw new InvalidInputException("The name must contain at least two words. Please try again!");
-                }
-            } catch(InvalidInputException e) {
-                screen.displayMessage(e.getMessage());
-            }
-        }
-
-        return input;
+        return capitalizeFirstLetterOfWords(getStringInput());
     }
 }

@@ -3,7 +3,7 @@ import java.util.List;
 
 public class Colectie {
     String numeColectie;
-    List<Carte> carti = new ArrayList<>();
+    List<Carte> carti;
 
     public Colectie(String numeColectie, List<Carte> carti) {
         this.numeColectie = numeColectie;

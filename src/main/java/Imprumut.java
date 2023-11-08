@@ -1,16 +1,18 @@
+import java.time.LocalDate;
 import java.util.Date;
+import java.util.Optional;
 
 public class Imprumut {
     private Carte carte;
     private String numeCititor;
-    private Date dataImprumut;
-    private Date dataReturnare;
+    private LocalDate dataImprumut;
+    private Optional<LocalDate> dataReturnare;
 
-    public Imprumut(Carte carte, String numeCititor, Date dataImprumut, Date dataReturnare) {
+    public Imprumut(Carte carte, String numeCititor, LocalDate dataImprumut, LocalDate dataReturnare) {
         this.carte = carte;
         this.numeCititor = numeCititor;
         this.dataImprumut = dataImprumut;
-        this.dataReturnare = dataReturnare;
+        this.dataReturnare = Optional.empty();
     }
 
     public Carte getCarte() {
@@ -29,19 +31,19 @@ public class Imprumut {
         this.numeCititor = numeCititor;
     }
 
-    public Date getDataImprumut() {
+    public LocalDate getDataImprumut() {
         return dataImprumut;
     }
 
-    public void setDataImprumut(Date dataImprumut) {
+    public void setDataImprumut(LocalDate dataImprumut) {
         this.dataImprumut = dataImprumut;
     }
 
-    public Date getDataReturnare() {
+    public Optional<LocalDate> getDataReturnare() {
         return dataReturnare;
     }
 
-    public void setDataReturnare(Date dataReturnare) {
+    public void setDataReturnare(Optional<LocalDate> dataReturnare) {
         this.dataReturnare = dataReturnare;
     }
 

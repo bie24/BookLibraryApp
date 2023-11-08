@@ -30,7 +30,6 @@ public class Biblioteca {
         }
     }
 
-
     public String getNumeBiblioteca() {
         return numeBiblioteca;
     }

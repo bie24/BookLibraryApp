@@ -28,6 +28,7 @@ public class Console implements Screen{
                 6. Imprumuta carte
                 7. Returneaza carte
                 8. Inapoi
+                9. Iesire
                 """);
     }
 
@@ -39,6 +40,7 @@ public class Console implements Screen{
                 2. Carti din colectie
                 3. Carti imprumutate la o anumita data
                 4. Inapoi
+                5. Iesire
                 """);
     }
 
