@@ -1,0 +1,4 @@
+Maria,Maria,sadsf,2020,sf,870,true,Romana
+Ion,Ion,sdsfgbh,2023,sf,8765,true,Romana
+informatica,ionel ionel,frgtr,2020,vgrftrh,909,false,Informatica
+Informatica Noua,sdfrg,rgth,2020,gbthy,909,false,Informatica
