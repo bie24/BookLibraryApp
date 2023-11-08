@@ -10,7 +10,7 @@ public class Console implements Screen{
     public void displayMenu() {
         System.out.println("""
                     ---Meniu---
-                    1. Administrare carti
+                    1. Gestionare carti
                     2. Rapoarte
                     3. Iesire
                     """);

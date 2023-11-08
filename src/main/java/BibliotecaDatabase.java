@@ -58,17 +58,16 @@ public class BibliotecaDatabase {
                 existingCarte.setanPublicare(carte.getanPublicare());
                 existingCarte.setCategorie(carte.getCategorie());
                 existingCarte.setIsbn(carte.getIsbn());
-                existingCarte.setEsteImprumutata(carte.isEsteImprumutata());
+                existingCarte.setEsteImprumutata(carte.esteImprumutata());
                 existingCarte.setNumeColectie(carte.getNumeColectie());
             }
         }
-        salveazaDateleLaInchidereaAplicatiei();
+        salveazaDateleLaInchidereaAplicatiei(biblioteca);
     }
 
     public void stergeCarte(Carte carte) {
         carti.remove(carte);
-
-        salveazaDateleLaInchidereaAplicatiei();
+        salveazaDateleLaInchidereaAplicatiei(biblioteca);
     }
 
 
@@ -94,17 +93,21 @@ public class BibliotecaDatabase {
                 String.valueOf(carte.getanPublicare()),
                 carte.getCategorie(),
                 String.valueOf(carte.getIsbn()),
-                String.valueOf(carte.isEsteImprumutata()),
+                String.valueOf(carte.esteImprumutata()),
                 carte.getNumeColectie());
     }
 
-    public void salveazaDateleLaInchidereaAplicatiei() {
+    public void salveazaDateleLaInchidereaAplicatiei(Biblioteca biblioteca) {
 
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true))) {
-            for(Carte carte : carti) {
-                writer.write(carteToDetalii(carte));
-                writer.newLine();
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, false))) {
+
+            for(Colectie colectie : biblioteca.getColectii()){
+                for(Carte carte : colectie.getCarti()){
+                    writer.write(carteToDetalii(carte));
+                    writer.newLine();
+                }
             }
+
         } catch (IOException e) {
             e.printStackTrace();
         }

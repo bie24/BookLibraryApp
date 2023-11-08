@@ -72,7 +72,7 @@ public class Carte {
         this.isbn = isbn;
     }
 
-    public boolean isEsteImprumutata() {
+    public boolean esteImprumutata() {
         return esteImprumutata;
     }
 
@@ -112,6 +112,18 @@ public class Carte {
             detalii.append(imprumut.toString()).append("\n");
         }
         return detalii.toString();
+    }
+
+    public void duplicareCarte (Carte carteNoua) {
+        this.titlu = carteNoua.titlu;
+        this.autor =  carteNoua.autor;
+        this.editura =  carteNoua.editura;
+        this.anPublicare =  carteNoua.anPublicare;
+        this.categorie =  carteNoua.categorie;
+        this.isbn =  carteNoua.isbn;
+        this.esteImprumutata =  carteNoua.esteImprumutata;
+        this.numeColectie =  carteNoua.numeColectie;
+        this.listaImprumuturi =  carteNoua.listaImprumuturi;
     }
 
     @Override

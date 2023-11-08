@@ -25,11 +25,11 @@ public class InterfataUtilizator {
 
     public void start() {
 //        while(true) {
-            screen.displayMenu();
-            int optiune = keypad.getInput();
-            if (!executeAction(optiune)) {
-                return;
-            }
+        screen.displayMenu();
+        int optiune = keypad.getInput();
+        if (!executeAction(optiune)) {
+            return;
+        }
 //        }
     }
 
@@ -38,7 +38,7 @@ public class InterfataUtilizator {
             case 1 -> gestionareCarti();
             case 2 -> rapoarte();
             case 3 -> {
-                bibliotecaDataBase.salveazaDateleLaInchidereaAplicatiei();
+                bibliotecaDataBase.salveazaDateleLaInchidereaAplicatiei(biblioteca);
                 screen.displayMessage("Iesire din aplicatie");
                 return false;
             }
@@ -73,7 +73,7 @@ public class InterfataUtilizator {
         screen.displayMessage("Introduceti detaliile cartii: ");
 
         String titlu = keypad.getCapitalizedUserInput("Titlu", false);
-        if(verificaDacaExistaCarte(titlu)) {
+        if(verificaDacaExistaCarteByTitlu(titlu) != null) {
             screen.displayMessage("Cartea cu titlul '" + titlu + "' exista deja in biblioteca");
             return;
         }
@@ -117,34 +117,27 @@ public class InterfataUtilizator {
             screen.displayMessage("Colectia " + numeColectie + " a fost creata si cartea a fost adaugata cu succes");
         }
     }
-    private boolean verificaDacaExistaCarte(String titlu) {
+    private Carte verificaDacaExistaCarteByTitlu(String titlu) {
         for(Colectie colectie : biblioteca.getColectii()) {
             for(Carte carte : colectie.getCarti()) {
                 if(carte.getTitlu().equalsIgnoreCase(titlu)) {
-                    return true;
+                    return carte;
                 }
             }
         }
-        return false;
+        return null;
     }
+
     private void editeazaCarte() {
         screen.displayMessage("Introduceti titlul cartii pe care doriti sa o editati: ");
         String titluCautat = keypad.getStringInput();
+        Carte carteEditata = verificaDacaExistaCarteByTitlu(titluCautat);
 
-        boolean carteGasita = false;
-        Carte carteEditata = null;
-        if(verificaDacaExistaCarte(titluCautat)) {
-            carteGasita = true;
+        if(carteEditata != null) {
+
             screen.displayMessage("Cartea a fost gasita. Introduceti noile detalii: ");
             String titlu = keypad.getCapitalizedUserInput("Titlu", false);
-//            if(verificaDacaExistaCarte(titlu)) {
-//                screen.displayMessage("Cartea cu titlul '" + titlu + "' exista deja in biblioteca");
-//            } else {
-//                carteEditata = new Carte(titlu, "", "", 0, "", 0, false, "");
-//            }
-
             String autor = keypad.getCapitalizedUserInput("Autor", false);
-
             String editura = keypad.getCapitalizedUserInput("Editura", false);
 
             screen.displayMessage("An Publicare: ");
@@ -152,47 +145,52 @@ public class InterfataUtilizator {
 
             String categorie = keypad.getCapitalizedUserInput("Categorie", false);
 
-            screen.displayMessage("ISBN: ");
-            long isbn = keypad.getLongInput();
-
             screen.displayMessage("Este imprumutata? (true/false): ");
             boolean esteImprumutata = keypad.getBooleanInput();
 
             String numeColectie = keypad.getCapitalizedUserInput("Nume colectie", false);
 
-           Carte carteNoua = new Carte(titlu,autor,editura,anPublicare,categorie,isbn,esteImprumutata,numeColectie);
-            boolean colectieGasita = false;
-
-            for(Colectie colectie : biblioteca.getColectii()) {
-                if(colectie.getNumeColectie().equalsIgnoreCase(numeColectie)) {
-                    colectieGasita = true;
-                    colectie.getCarti().add(carteNoua);
-                    screen.displayMessage("Carte adaugata cu succes in colectia " + numeColectie);
-                    return;
-                }
-            }
-            List<Carte> listaCarti = new ArrayList<>();
-            listaCarti.add(carteNoua);
-
-            if(!colectieGasita) {
-                Colectie colectie = new Colectie(numeColectie,listaCarti);
-            }
             carteEditata.setTitlu(titlu);
             carteEditata.setAutor(autor);
             carteEditata.setEditura(editura);
             carteEditata.setanPublicare(anPublicare);
             carteEditata.setCategorie(categorie);
-            carteEditata.setIsbn(isbn);
             carteEditata.setEsteImprumutata(esteImprumutata);
             carteEditata.setNumeColectie(numeColectie);
+
+            boolean colectieGasita = false;
+
+            for(Colectie colectie : biblioteca.getColectii()) {
+                if(colectie.getNumeColectie().equalsIgnoreCase(numeColectie)) {
+                    colectieGasita = true;
+                    for(Carte c : colectie.getCarti()){
+                        if(c.getIsbn() == carteEditata.getIsbn()) {
+                            c.duplicareCarte(carteEditata);
+                            screen.displayMessage("Carte editata cu succes in colectia " + numeColectie);
+                        }
+                    }
+
+                    return;
+                }
+            }
+
+            if(!colectieGasita) {
+                List<Carte> listaCarti = new ArrayList<>();
+                listaCarti.add(carteEditata);
+                Colectie colectie = new Colectie(numeColectie,listaCarti);
+                biblioteca.getColectii().add(colectie);
+            }
+
+
+
             screen.displayMessage("Carte editata cu succes.");
-            bibliotecaDataBase.salveazaDateleLaInchidereaAplicatiei();
         }
-        if(!carteGasita) {
+        if(carteEditata == null) {
             screen.displayMessage("Cartea cu titlul '" + titluCautat + "' nu a fost gasita");
         }
 
     }
+
 
     private void stergeCarte() {
         screen.displayMessage("Introduceti titlul cartii pe care doriti sa o stergeti: ");
@@ -266,7 +264,7 @@ public class InterfataUtilizator {
                     screen.displayMessage("Categorie: " + carte.getCategorie());
                     screen.displayMessage("ISBN: " +carte.getIsbn());
                     screen.displayMessage("Colectie: " +carte.getNumeColectie());
-                    if(carte.isEsteImprumutata()) {
+                    if(carte.esteImprumutata()) {
                         screen.displayMessage("Cartea nu este disponibila");
                     } else {
                         screen.displayMessage("Cartea este disponibila");
@@ -288,13 +286,13 @@ public class InterfataUtilizator {
         for(Colectie colectie : biblioteca.getColectii()) {
             for(Carte carte : colectie.getCarti()) {
                 if(carte.getTitlu().equalsIgnoreCase(titlu)) {
-                    if(!carte.isEsteImprumutata()) {
+                    if(!carte.esteImprumutata()) {
                         screen.displayMessage("Introduceti numele studentului: ");
                         String numeCititor = keypad.getStringInput();
 
                         Date dataImprumut = new Date();
                         Date dataReturnare = null;
-                        Imprumut imprumut = new Imprumut(carte, numeCititor, dataImprumut,dataReturnare);
+                        Imprumut imprumut = new Imprumut(carte, numeCititor, dataImprumut, dataReturnare);
                         carte.adaugaImprumut(imprumut);
                         carte.setEsteImprumutata(true);
 
@@ -306,7 +304,7 @@ public class InterfataUtilizator {
                     break;
                 }
             }
-         }
+        }
         if(!carteGasita) {
             screen.displayMessage("Nu s-a gasit nicio carte care sa se potriveasca!");
         }
@@ -320,7 +318,7 @@ public class InterfataUtilizator {
         for(Colectie colectie : biblioteca.getColectii()) {
             for(Carte carte : colectie.getCarti()) {
                 if(carte.getTitlu().equalsIgnoreCase(titlu)) {
-                    if(carte.isEsteImprumutata()) {
+                    if(carte.esteImprumutata()) {
                         screen.displayMessage("Detalii despre imprumuturile cartii: " + carte.getTitlu() + ":");
                         for(Imprumut imprumut : carte.getListaImprumuturi()) {
                             screen.displayMessage(imprumut.toString());
