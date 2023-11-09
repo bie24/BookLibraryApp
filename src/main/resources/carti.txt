@@ -1,4 +1,4 @@
 Ana Si Ion,Sdcfrg,Dfrge,2020,Vfedg,909,true,Istorie
 Moara Cu Noroc,Ioan,Asdc,2000,Cdsvf,9098,true,Istorie
 Maria,Maria,sadsf,2020,sf,870,true,Romana
-Informatica,Buna,ABCD,2000,SF,324,true,Informatica
+Informatica,Buna,ABCD,2000,SF,324,false,Informatica

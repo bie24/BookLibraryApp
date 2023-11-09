@@ -4,13 +4,8 @@ import io.Keypad;
 import io.Screen;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Optional;
-
-import static com.sun.tools.javac.util.Constants.format;
 
 public class InterfataUtilizator {
 
@@ -42,7 +37,7 @@ public class InterfataUtilizator {
             case 2 -> rapoarte();
             case 3 -> {
                 bibliotecaDatabase.salveazaDateleLaInchidereaAplicatiei(biblioteca);
-                imprumutDatabase.salveazaDateleLaInchidereaAplicatiei(imprumut);
+                imprumutDatabase.salveazaDateleLaInchidereaAplicatiei(biblioteca);
                 screen.displayMessage("Iesire din aplicatie");
                 return false;
             }
@@ -70,7 +65,7 @@ public class InterfataUtilizator {
                 }
                 case 9 -> {
                     bibliotecaDatabase.salveazaDateleLaInchidereaAplicatiei(biblioteca);
-                    imprumutDatabase.salveazaDateleLaInchidereaAplicatiei(imprumut);
+                    imprumutDatabase.salveazaDateleLaInchidereaAplicatiei(biblioteca);
                     screen.displayMessage("Iesire din aplicatie");
                     System.exit(0);
                 }
@@ -98,9 +93,9 @@ public class InterfataUtilizator {
 
         Carte carteNoua = new Carte(titlu,autor,editura,anPublicare,categorie,isbn,esteImprumutata,numeColectie);
         bibliotecaDatabase.adaugaCarte(carteNoua);
-        
+
         boolean colectieExista = false;
-        
+
         for(Colectie colectie : biblioteca.getColectii()) {
             if(colectie.getNumeColectie().equalsIgnoreCase(numeColectie)) {
                 colectie.getCarti().add(carteNoua);
@@ -172,21 +167,21 @@ public class InterfataUtilizator {
                 Colectie colectie = new Colectie(numeColectie,listaCarti);
                 biblioteca.getColectii().add(colectie);
             }
-            
+
             screen.displayMessage("Carte editata cu succes.");
         }
-        
+
         if(carteEditata == null) {
             screen.displayMessage("Cartea cu titlul '" + titluCautat + "' nu a fost gasita");
         }
     }
-    
+
     private void stergeCarte() {
 
         String titluCautat = keypad.getCapitalizedUserInput("Introduceti titlul cartii pe care doriti sa o stergeti");
 
         boolean carteGasita = false;
-        
+
         for (Colectie colectie : biblioteca.getColectii()) {
             for (Carte carte : colectie.getCarti()) {
                 if (carte.getTitlu().equalsIgnoreCase(titluCautat)) {
@@ -205,7 +200,7 @@ public class InterfataUtilizator {
             screen.displayMessage("Cartea cu titlul " + titluCautat + " nu a fost găsită în bibliotecă.");
         }
     }
-    
+
     private void listaCarti() {
 
         String numeColectie = keypad.getCapitalizedUserInput("Doriti sa listati cartile dintr-o anumita colectie sau toate colectiile? Introduceti numele colectiei sau 'toate'");
@@ -281,11 +276,10 @@ public class InterfataUtilizator {
                         String numeCititor = keypad.getCapitalizedUserInput("Introduceti numele studentului");
 
                         LocalDate dataImprumut = LocalDate.now();
-                        LocalDate dataReturnare = null;
-                        Imprumut imprumut = new Imprumut(carte, numeCititor, dataImprumut, dataReturnare);
+                        Imprumut imprumut = new Imprumut(carte, numeCititor, dataImprumut);
                         carte.adaugaImprumut(imprumut);
                         carte.setEsteImprumutata(true);
-                        imprumutDatabase.adaugaImprumut(imprumut);
+                        imprumutDatabase.getStatusImprumuturiHashMap().put(imprumut,true);
 
                         screen.displayMessage("Cartea a fost imprumutata cu succes.");
                     } else {
@@ -321,7 +315,7 @@ public class InterfataUtilizator {
                         boolean gasitImprumut = false;
                         for(Imprumut imprumut : carte.getListaImprumuturi()) {
                             if(imprumut.getNumeCititor().equalsIgnoreCase(numeCititor)) {
-                                imprumut.setDataReturnare(Optional.of(dataReturnare));
+                                imprumut.setDataReturnare(dataReturnare);
                                 gasitImprumut = true;
                                 carte.setEsteImprumutata(false);
                                 carte.returneazaCarteImprumutata(imprumut);
@@ -367,7 +361,7 @@ public class InterfataUtilizator {
                 }
                 case 5 -> {
                     bibliotecaDatabase.salveazaDateleLaInchidereaAplicatiei(biblioteca);
-                    imprumutDatabase.salveazaDateleLaInchidereaAplicatiei(imprumut);
+                    imprumutDatabase.salveazaDateleLaInchidereaAplicatiei(biblioteca);
                     screen.displayMessage("Iesire din aplicatie");
                     System.exit(0);
                 }
