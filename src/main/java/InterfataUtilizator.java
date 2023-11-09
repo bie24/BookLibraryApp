@@ -38,7 +38,7 @@ public class InterfataUtilizator {
             case 3 -> {
                 bibliotecaDatabase.salveazaDateleLaInchidereaAplicatiei(biblioteca);
                 imprumutDatabase.salveazaDateleLaInchidereaAplicatiei(biblioteca);
-                screen.displayMessage("Iesire din aplicatie");
+                screen.displayMessage("Se inchide aplicatia");
                 return false;
             }
             default -> screen.displayMessage("Optiune invalida. Alege alta optiune");
@@ -67,7 +67,7 @@ public class InterfataUtilizator {
                 case 9 -> {
                     bibliotecaDatabase.salveazaDateleLaInchidereaAplicatiei(biblioteca);
                     imprumutDatabase.salveazaDateleLaInchidereaAplicatiei(biblioteca);
-                    screen.displayMessage("Iesire din aplicatie");
+                    screen.displayMessage("Se inchide aplicatia");
                     System.exit(0);
                 }
                 default -> screen.displayMessage("Optiune invalida. Incearca din nou");
@@ -206,16 +206,16 @@ public class InterfataUtilizator {
 
         String numeColectie = keypad.getCapitalizedUserInput("Doriti sa listati cartile dintr-o anumita colectie sau toate colectiile? Introduceti numele colectiei sau 'toate'");
         List<Colectie> colectii = biblioteca.getColectii();
+        screen.displayMessage("");
 
         if(numeColectie.equalsIgnoreCase("toate")) {
             for(Colectie colectie : colectii) {
-                System.out.println();
                 screen.displayMessage("Colectia: " + colectie.getNumeColectie());
                 List<Carte> carti = colectie.getCarti();
                 for(Carte carte : carti) {
                     screen.displayMessage("'" +carte.getTitlu() + "' de " + carte.getAutor());
                 }
-
+                screen.displayMessage("");
             }
         } else {
             boolean colectieGasita = false;
@@ -261,7 +261,7 @@ public class InterfataUtilizator {
             }
         }
         if(!carteGasita) {
-            screen.displayMessage("Nu s-a gasit nicio carte care sa se potriveasca cu titluCautatl de cautare");
+            screen.displayMessage("Nu s-a gasit nicio carte care sa se potriveasca cu titlul cautat");
         }
     }
 
@@ -271,8 +271,8 @@ public class InterfataUtilizator {
         try{
             Carte carte = obtineCarteDupaTitlu(titlu);
             if (!carte.esteImprumutata()) {
-                String numeCititor = keypad.getCapitalizedUserInput("Introduceti numele studentului");
-                imprumutDatabase.imprumutaCarte(carte, numeCititor);
+                String numeStudent = keypad.getCapitalizedUserInput("Introduceti numele studentului");
+                imprumutDatabase.imprumutaCarte(carte, numeStudent);
             }
             else{
                 InterfataUtilizator.screen.displayMessage("Aceasta carte este deja imprumutata");
@@ -303,30 +303,25 @@ public class InterfataUtilizator {
             for(Carte carte : colectie.getCarti()) {
                 if(carte.getTitlu().equalsIgnoreCase(titlu)) {
                     if(carte.esteImprumutata()) {
-                        screen.displayMessage("Detalii despre imprumuturile cartii: " + carte.getTitlu() + ":");
-                        for (Imprumut imprumut : carte.getListaImprumuturi()) {
-                            screen.displayMessage(imprumut.toString());
-                        }
-
-                        String numeCititor = keypad.getCapitalizedUserInput("Introduceti numele studentului care returneaza cartea");
+                        String numeStudent = keypad.getCapitalizedUserInput("Introduceti numele studentului care returneaza cartea");
                         LocalDate dataReturnare = LocalDate.now();
 
                         boolean gasitImprumut = false;
                         for(Imprumut imprumut : carte.getListaImprumuturi()) {
-                            if(imprumut.getNumeCititor().equalsIgnoreCase(numeCititor)) {
+                            if(imprumut.getNumeStudent().equalsIgnoreCase(numeStudent)) {
                                 imprumut.setDataReturnare(dataReturnare);
                                 gasitImprumut = true;
                                 carte.setEsteImprumutata(false);
-                                screen.displayMessage("Cartea a fost returnata cu succes.");
+                                screen.displayMessage("Cartea a fost returnata cu succes!");
                                 break;
                             }
                         }
-
-                        // Returnează cartea utilizând metoda corectă
-                        boolean carteReturnata = imprumutDatabase.returneazaCarte(carte, numeCititor);
-
-                        if (carteReturnata) {
-                            screen.displayMessage("Cartea a fost returnata cu succes!");
+                        if (gasitImprumut) {
+                            for (Imprumut imprumut : carte.getListaImprumuturi()) {
+                                if(imprumut.getNumeStudent().equalsIgnoreCase(numeStudent)) {
+                                    screen.displayMessage(imprumut.toString());
+                                }
+                        }
                         } else {
                             screen.displayMessage("Nu s-a gasit un imprumut cu numele numele studentului sau cartea nu este imprumutata.");
                         }
@@ -353,17 +348,18 @@ public class InterfataUtilizator {
                 case 1 -> raportCartiDupaAutor();
                 case 2 -> raportCartiDinColectie();
                 case 3 -> raportCartiImprumutateLaOAnumitaData();
-                case 4 -> {
+                case 4 -> raportCartiImprumutateInPrezent();
+                case 5 -> {
                     iesire = true;
                     start();
                 }
-                case 5 -> {
+                case 6 -> {
                     bibliotecaDatabase.salveazaDateleLaInchidereaAplicatiei(biblioteca);
                     imprumutDatabase.salveazaDateleLaInchidereaAplicatiei(biblioteca);
-                    screen.displayMessage("Iesire din aplicatie");
+                    screen.displayMessage("Se inchide aplicatia");
                     System.exit(0);
                 }
-                default -> screen.displayMessage("Optiune invalida. Incearca din nou");
+                default -> screen.displayMessage("Optiune invalida. Incearcati din nou");
             }
         }
     }
@@ -435,6 +431,18 @@ public class InterfataUtilizator {
             screen.displayMessage("Carti imprumutate la data de " + dataCautata);
             for(Carte carte : cartiImprumutateLaData) {
                 screen.displayMessage("'" + carte.getTitlu() + "' de " + carte.getAutor());
+            }
+        }
+    }
+    //TODO
+    private void raportCartiImprumutateInPrezent() {
+        for(Colectie colectie : biblioteca.getColectii()) {
+            for(Carte carte : colectie.getCarti()) {
+                for(Imprumut imprumut : imprumutDatabase.getImprumuturiActive()) {
+                    if(imprumut.getDataReturnare().isEmpty()) {
+                        screen.displayMessage(imprumut.toString());
+                    }
+                }
             }
         }
     }

@@ -39,8 +39,9 @@ public class Console implements Screen{
                 1. Carti dupa autor
                 2. Carti din colectie
                 3. Carti imprumutate la o anumita data
-                4. Inapoi
-                5. Iesire
+                4. Carti imprumutate in prezent
+                5. Inapoi
+                6. Iesire
                 """);
     }
 

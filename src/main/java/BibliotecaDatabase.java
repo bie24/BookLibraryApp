@@ -22,12 +22,12 @@ public class BibliotecaDatabase {
                     String titlu = dateCarte[0];
                     String autor = dateCarte[1];
                     String editura = dateCarte[2];
-                    int anPublicatie = Integer.parseInt(dateCarte[3].trim());
+                    int anPublicare = Integer.parseInt(dateCarte[3].trim());
                     String categorie = dateCarte[4];
                     long isbn = Long.parseLong(dateCarte[5].trim());
                     boolean esteImprumutata = Boolean.parseBoolean(dateCarte[6]);
                     String numeColectie = dateCarte[7];
-                    Carte carte = new Carte(titlu,autor,editura,anPublicatie,categorie,isbn,esteImprumutata,numeColectie);
+                    Carte carte = new Carte(titlu,autor,editura,anPublicare,categorie,isbn,esteImprumutata,numeColectie);
                     carti.add(carte);
 
                 }
@@ -42,7 +42,7 @@ public class BibliotecaDatabase {
         carti.add(carte);
     }
 
-    private String carteToDetalii(Carte carte) {
+    private String detaliiCarte(Carte carte) {
         return String.join(",",
                 carte.getTitlu(),
                 carte.getAutor(),
@@ -60,7 +60,7 @@ public class BibliotecaDatabase {
 
             for(Colectie colectie : biblioteca.getColectii()){
                 for(Carte carte : colectie.getCarti()){
-                    writer.write(carteToDetalii(carte));
+                    writer.write(detaliiCarte(carte));
                     writer.newLine();
                 }
             }

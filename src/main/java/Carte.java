@@ -144,7 +144,6 @@ public class Carte {
                 ", isbn=" + isbn +
                 ", esteImprumutata=" + esteImprumutata +
                 ", numeColectie='" + numeColectie + '\'' +
-//                ", listaImprumuturi=" + listaImprumuturi +
                 '}';
     }
 }

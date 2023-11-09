@@ -5,19 +5,19 @@ import java.util.Optional;
 
 public class Imprumut {
     private Carte carte;
-    private String numeCititor;
+    private String numeStudent;
     private LocalDate dataImprumut;
     private LocalDate dataReturnare;
 
-    public Imprumut(Carte carte, String numeCititor, LocalDate dataImprumut) {
+    public Imprumut(Carte carte, String numeStudent, LocalDate dataImprumut) {
         this.carte = carte;
-        this.numeCititor = numeCititor;
+        this.numeStudent = numeStudent;
         this.dataImprumut = dataImprumut;
     }
 
-    public Imprumut(Carte carte, String numeCititor, LocalDate dataImprumut, LocalDate dataReturnare) {
+    public Imprumut(Carte carte, String numeStudent, LocalDate dataImprumut, LocalDate dataReturnare) {
         this.carte = carte;
-        this.numeCititor = numeCititor;
+        this.numeStudent = numeStudent;
         this.dataImprumut = dataImprumut;
         this.dataReturnare = dataReturnare;
     }
@@ -30,12 +30,12 @@ public class Imprumut {
         this.carte = carte;
     }
 
-    public String getNumeCititor() {
-        return numeCititor;
+    public String getNumeStudent() {
+        return numeStudent;
     }
 
-    public void setNumeCititor(String numeCititor) {
-        this.numeCititor = numeCititor;
+    public void setNumeStudent(String numeStudent) {
+        this.numeStudent = numeStudent;
     }
 
     public LocalDate getDataImprumut() {
@@ -59,19 +59,19 @@ public class Imprumut {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Imprumut imprumut = (Imprumut) o;
-        return Objects.equals(carte, imprumut.carte) && Objects.equals(numeCititor, imprumut.numeCititor) && Objects.equals(dataImprumut, imprumut.dataImprumut);
+        return Objects.equals(carte, imprumut.carte) && Objects.equals(numeStudent, imprumut.numeStudent) && Objects.equals(dataImprumut, imprumut.dataImprumut);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(carte, numeCititor, dataImprumut);
+        return Objects.hash(carte, numeStudent, dataImprumut);
     }
 
     @Override
     public String toString() {
-        return "Imprumut: " +
+        return "Informatii despre imprumut: " +
                 " Cartea '" + carte.getTitlu() +
-                "' a fost imprumutata de " + numeCititor +
+                "' a fost imprumutata de " + numeStudent +
                 " la data de " + dataImprumut +
                 " pana la data de " + dataReturnare;
     }

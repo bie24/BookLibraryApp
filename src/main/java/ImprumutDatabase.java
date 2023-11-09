@@ -32,11 +32,11 @@ public class ImprumutDatabase {
                 String[] dateImprumut = linie.split(",");
                 if(dateImprumut.length == 4) {
                     String titluCarte = dateImprumut[0];
-                    String numeCititor = dateImprumut[1];
+                    String numeStudent = dateImprumut[1];
                     LocalDate dataImprumut = LocalDate.parse(dateImprumut[2].trim(), formatter);
                     LocalDate dataReturnare = dateImprumut[3].equalsIgnoreCase("null") ? null : LocalDate.parse(dateImprumut[3].trim(), formatter);
                     Carte carte = obtineCarteDupaTitlu(titluCarte);
-                    Imprumut imprumut = new Imprumut(carte, numeCititor, dataImprumut, dataReturnare);
+                    Imprumut imprumut = new Imprumut(carte, numeStudent, dataImprumut, dataReturnare);
                     imprumuturi.add(imprumut);
                     carte.adaugaImprumut(imprumut);
                     statusImprumuturiHashMap.put(imprumut, true);
@@ -60,10 +60,10 @@ public class ImprumutDatabase {
     }
 
 
-    public void imprumutaCarte(Carte carte, String numeCititor) {
+    public void imprumutaCarte(Carte carte, String numeStudent) {
 
         LocalDate dataImprumut = LocalDate.now();
-        Imprumut imprumut = new Imprumut(carte, numeCititor, dataImprumut);
+        Imprumut imprumut = new Imprumut(carte, numeStudent, dataImprumut);
         carte.adaugaImprumut(imprumut);
         carte.setEsteImprumutata(true);
         statusImprumuturiHashMap.put(imprumut,true);
@@ -94,7 +94,7 @@ public class ImprumutDatabase {
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, false))) {
             for(Imprumut imprumutExistent : imprumuturi) {
-                writer.write(imprumutToDetalii(imprumutExistent));
+                writer.write(detaliiImprumut(imprumutExistent));
                 writer.newLine();
             }
         } catch (IOException e) {
@@ -102,7 +102,7 @@ public class ImprumutDatabase {
         }
     }
 
-    private String imprumutToDetalii(Imprumut imprumut) {
+    private String detaliiImprumut(Imprumut imprumut) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
 
@@ -111,23 +111,23 @@ public class ImprumutDatabase {
 
         return String.join(",",
                 imprumut.getCarte().getTitlu(),
-                imprumut.getNumeCititor(),
+                imprumut.getNumeStudent(),
                 dataImprumutStr,
                 dataReturnareStr);
     }
 
-    public boolean returneazaCarte(Carte carte, String numeCititor) {
-        boolean gasitImprumut = false;
-
-        for (Imprumut imprumut : imprumuturi) {
-            if (imprumut.getCarte().equals(carte) && imprumut.getNumeCititor().equalsIgnoreCase(numeCititor) && imprumut.getDataReturnare().isEmpty()) {
-                imprumut.setDataReturnare(LocalDate.now());
-                gasitImprumut = true;
-                carte.setEsteImprumutata(false);
-                statusImprumuturiHashMap.put(imprumut, true);
-                break;
-            }
-        }
-        return gasitImprumut;
-    }
+//    public boolean returneazaCarte(Carte carte, String numeStudent) {
+//        boolean gasitImprumut = false;
+//
+//        for (Imprumut imprumut : imprumuturi) {
+//            if (imprumut.getCarte().equals(carte) && imprumut.getNumeStudent().equalsIgnoreCase(numeStudent) && imprumut.getDataReturnare().isEmpty()) {
+//                imprumut.setDataReturnare(LocalDate.now());
+//                gasitImprumut = true;
+//                carte.setEsteImprumutata(false);
+//                statusImprumuturiHashMap.put(imprumut, true);
+//                break;
+//            }
+//        }
+//        return gasitImprumut;
+//    }
 }
