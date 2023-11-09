@@ -10,11 +10,11 @@ import java.util.List;
 public class InterfataUtilizator {
 
     private Biblioteca biblioteca;
-    private Screen screen;
     private Keypad keypad;
     private BibliotecaDatabase bibliotecaDatabase;
     private ImprumutDatabase imprumutDatabase;
     private Imprumut imprumut;
+    static Screen screen;
 
     public InterfataUtilizator() {
         biblioteca = new Biblioteca("Biblioteca ASE");
@@ -50,6 +50,7 @@ public class InterfataUtilizator {
         while(!iesire) {
             screen.displayMenuBooks();
             int optiune = keypad.getInput();
+
 
             switch (optiune) {
                 case 1 -> adaugaCarte();
@@ -267,32 +268,30 @@ public class InterfataUtilizator {
     private void imprumutaCarte() {
 
         String titlu = keypad.getCapitalizedUserInput("Introduceti titlul cartii pe care doriti sa o imprumutati");
-        boolean carteGasita = false;
+        try{
+            Carte carte = obtineCarteDupaTitlu(titlu);
+            if (!carte.esteImprumutata()) {
+                String numeCititor = keypad.getCapitalizedUserInput("Introduceti numele studentului");
+                imprumutDatabase.imprumutaCarte(carte, numeCititor);
+            }
+            else{
+                InterfataUtilizator.screen.displayMessage("Aceasta carte este deja imprumutata");
+            }
+        }
+        catch (Exception e){
+            InterfataUtilizator.screen.displayMessage("Nu s-a gasit nicio carte care sa se potriveasca!");
+        }
+    }
 
-        for(Colectie colectie : biblioteca.getColectii()) {
-            for(Carte carte : colectie.getCarti()) {
-                if(carte.getTitlu().equalsIgnoreCase(titlu)) {
-                    if(!carte.esteImprumutata()) {
-                        String numeCititor = keypad.getCapitalizedUserInput("Introduceti numele studentului");
-
-                        LocalDate dataImprumut = LocalDate.now();
-                        Imprumut imprumut = new Imprumut(carte, numeCititor, dataImprumut);
-                        carte.adaugaImprumut(imprumut);
-                        carte.setEsteImprumutata(true);
-                        imprumutDatabase.getStatusImprumuturiHashMap().put(imprumut,true);
-
-                        screen.displayMessage("Cartea a fost imprumutata cu succes.");
-                    } else {
-                        screen.displayMessage("Aceasta carte este deja imprumutata");
-                    }
-                    carteGasita = true;
-                    break;
+    private Carte obtineCarteDupaTitlu(String titlu) {
+        for (Colectie colectie : biblioteca.getColectii()) {
+            for (Carte carte : colectie.getCarti()) {
+                if (carte.getTitlu().equalsIgnoreCase(titlu)) {
+                    return carte;
                 }
             }
         }
-        if(!carteGasita) {
-            screen.displayMessage("Nu s-a gasit nicio carte care sa se potriveasca!");
-        }
+        return null;
     }
 
     private void returneazaCarte() {
@@ -318,7 +317,6 @@ public class InterfataUtilizator {
                                 imprumut.setDataReturnare(dataReturnare);
                                 gasitImprumut = true;
                                 carte.setEsteImprumutata(false);
-                                carte.returneazaCarteImprumutata(imprumut);
                                 screen.displayMessage("Cartea a fost returnata cu succes.");
                                 break;
                             }

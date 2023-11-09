@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Carte {
 
@@ -98,14 +99,11 @@ public class Carte {
 
     public void adaugaImprumut(Imprumut imprumut) {
         listaImprumuturi.add(imprumut);
-        esteImprumutata = true;
-    }
-    public void returneazaCarteImprumutata(Imprumut imprumut) {
-        listaImprumuturi.remove(imprumut);
-        if(listaImprumuturi.isEmpty()) {
-            esteImprumutata = false;
+        if(imprumut.getDataReturnare().equals(null)) {
+            esteImprumutata = true;
         }
     }
+
     public String detaliiImprumut() {
         StringBuilder detalii = new StringBuilder("Imprumuturi pentru cartea '" + titlu + "':\n");
         for(Imprumut imprumut : listaImprumuturi) {
@@ -125,6 +123,15 @@ public class Carte {
         this.numeColectie =  carteNoua.numeColectie;
         this.listaImprumuturi =  carteNoua.listaImprumuturi;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Carte carte = (Carte) o;
+        return anPublicare == carte.anPublicare && isbn == carte.isbn && esteImprumutata == carte.esteImprumutata && Objects.equals(titlu, carte.titlu) && Objects.equals(autor, carte.autor) && Objects.equals(editura, carte.editura) && Objects.equals(categorie, carte.categorie) && Objects.equals(numeColectie, carte.numeColectie) && Objects.equals(listaImprumuturi, carte.listaImprumuturi);
+    }
+
 
     @Override
     public String toString() {
