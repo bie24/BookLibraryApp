@@ -1,5 +1,5 @@
-Ana Si Ion,Sdcfrg,Dfrge,2020,Vfedg,909,false,Istorie
-Mate,Ioan,Asdc,2000,Cdsvf,9098,false,Istorie
-Maria,Maria,sadsf,2020,sf,870,false,Romana
-Semnul,Andriana,Defrge,2010,Sf,9987,false,Romana
-Informatica,Buna,ABCD,2000,SF,324,false,Informatica
+Finante,Ion Stancu,Editura Economica,2002,Finantarea Intreprinderii,9735905124,true,Finante
+Management financiar: vol. 1: Analiza financiara si gestiune financiara operationala,Victor Dragota,Editura Economica,2003,Analiza financiara,9735908425,false,Management
+Clonarea informatica,Ion Ivan,Editura ASE,2004,Programarea calculatoarelor,9735943107,false,Informatica
+Algebra liniara: culegere de probleme,Aida Toma,Editura Economica,2002,Algebra,9735905973,false,Matematica
+Statistica: baze teoretice si aplicatii,Vergil Voineagu,Editura Economica,2007,Analiza statistica,9789737092731,true,Statistica

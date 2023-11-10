@@ -18,29 +18,30 @@ public class ImprumutDatabase {
         this.biblioteca = biblioteca;
         imprumuturi = citesteImprumuturi();
     }
-    public HashMap<Imprumut, Boolean> getStatusImprumuturiHashMap() {
-        return statusImprumuturiHashMap;
-    }
 
     public List<Imprumut> citesteImprumuturi() {
+
         List<Imprumut> imprumuturi = new ArrayList<>();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 
         try(BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             String linie;
+
             while((linie = reader.readLine()) != null) {
                 String[] dateImprumut = linie.split(",");
+
                 if(dateImprumut.length == 4) {
                     String titluCarte = dateImprumut[0];
                     String numeStudent = dateImprumut[1];
                     LocalDate dataImprumut = LocalDate.parse(dateImprumut[2].trim(), formatter);
                     LocalDate dataReturnare = dateImprumut[3].equalsIgnoreCase("null") ? null : LocalDate.parse(dateImprumut[3].trim(), formatter);
+
                     Carte carte = obtineCarteDupaTitlu(titluCarte);
+
                     Imprumut imprumut = new Imprumut(carte, numeStudent, dataImprumut, dataReturnare);
                     imprumuturi.add(imprumut);
                     carte.adaugaImprumut(imprumut);
                     statusImprumuturiHashMap.put(imprumut, true);
-
                 }
             }
         } catch (IOException e) {
@@ -68,20 +69,7 @@ public class ImprumutDatabase {
         carte.setEsteImprumutata(true);
         statusImprumuturiHashMap.put(imprumut,true);
         imprumuturi.add(imprumut);
-        InterfataUtilizator.screen.displayMessage("Cartea a fost imprumutata cu succes.");
-    }
-
-    public List<Imprumut> getListaImprumuturi() {
-        return imprumuturi;
-    }
-
-    public List<Imprumut> getImprumuturiActive() {
-        List<Imprumut> imprumuturiActive = new ArrayList<>();
-        for(Map.Entry<Imprumut, Boolean> e : statusImprumuturiHashMap.entrySet()){
-            if (e.getValue().equals(true))
-                imprumuturiActive.add(e.getKey());
-        }
-        return imprumuturiActive;
+        GestiuneBiblioteca.screen.displayMessage("Cartea a fost imprumutata cu succes.");
     }
 
     public void salveazaDateleLaInchidereaAplicatiei(Biblioteca biblioteca) {
@@ -116,18 +104,15 @@ public class ImprumutDatabase {
                 dataReturnareStr);
     }
 
-//    public boolean returneazaCarte(Carte carte, String numeStudent) {
-//        boolean gasitImprumut = false;
-//
-//        for (Imprumut imprumut : imprumuturi) {
-//            if (imprumut.getCarte().equals(carte) && imprumut.getNumeStudent().equalsIgnoreCase(numeStudent) && imprumut.getDataReturnare().isEmpty()) {
-//                imprumut.setDataReturnare(LocalDate.now());
-//                gasitImprumut = true;
-//                carte.setEsteImprumutata(false);
-//                statusImprumuturiHashMap.put(imprumut, true);
-//                break;
-//            }
-//        }
-//        return gasitImprumut;
-//    }
+    public void stergeImprumuturiByCarte(Carte carte) {
+        Iterator<Imprumut> iterator = imprumuturi.iterator();
+        while(iterator.hasNext()) {
+            Imprumut imprumut = iterator.next();
+            if(imprumut.getCarte().equals(carte)) {
+                iterator.remove();
+                statusImprumuturiHashMap.remove(imprumut);
+            }
+        }
+    }
+
 }

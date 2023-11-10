@@ -7,7 +7,7 @@ public interface Keypad {
     String getStringInput();
     int getYearInput(String message, int maxYear);
     LocalDate getDateInput(String message);
-    long getLongInput(String message);
+    long getIsbnInput(String message);
     boolean getBooleanInput(String message);
     String capitalizeFirstLetterOfWords(String input);
     String getCapitalizedUserInput(String message);

@@ -7,7 +7,13 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class InterfataUtilizator {
+/**
+ * Clasa GestiuneBiblioteca reprezinta un sistem de gestionare al unei biblioteci
+ * Aceasta clasa gestioneaza operatiile legate de adaugarea, editarea, stergerea si afisarea cartilor,
+ * precum si gestionarea imprumuturilor si generarea de rapoarte
+ */
+
+public class GestiuneBiblioteca {
 
     private Biblioteca biblioteca;
     private Keypad keypad;
@@ -16,7 +22,7 @@ public class InterfataUtilizator {
     private Imprumut imprumut;
     static Screen screen;
 
-    public InterfataUtilizator() {
+    public GestiuneBiblioteca() {
         biblioteca = new Biblioteca("Biblioteca ASE");
         bibliotecaDatabase = new BibliotecaDatabase(biblioteca);
         imprumutDatabase = new ImprumutDatabase(biblioteca);
@@ -24,6 +30,10 @@ public class InterfataUtilizator {
         keypad = new Keyboard(screen);
     }
 
+    /**
+     * Metoda de pornire a aplicatiei
+     * Afiseaza meniul principal si executa actiunile corespunzatoare alese de utilizator
+     */
     public void start() {
         screen.displayMenu();
         int optiune = keypad.getInput();
@@ -88,7 +98,7 @@ public class InterfataUtilizator {
         String editura = keypad.getCapitalizedUserInput("Editura");
         int anPublicare = keypad.getYearInput("An publicare", 2023);
         String categorie = keypad.getCapitalizedUserInput("Categorie");
-        long isbn = keypad.getLongInput("ISBN");
+        long isbn = keypad.getIsbnInput("ISBN");
         boolean esteImprumutata = keypad.getBooleanInput("Este imprumutata? (true/false)");
         String numeColectie = keypad.getCapitalizedUserInput("Nume colectie");
 
@@ -142,7 +152,7 @@ public class InterfataUtilizator {
             carteEditata.setTitlu(titlu);
             carteEditata.setAutor(autor);
             carteEditata.setEditura(editura);
-            carteEditata.setanPublicare(anPublicare);
+            carteEditata.setAnPublicare(anPublicare);
             carteEditata.setCategorie(categorie);
             carteEditata.setEsteImprumutata(esteImprumutata);
             carteEditata.setNumeColectie(numeColectie);
@@ -152,9 +162,9 @@ public class InterfataUtilizator {
             for(Colectie colectie : biblioteca.getColectii()) {
                 if(colectie.getNumeColectie().equalsIgnoreCase(numeColectie)) {
                     colectieGasita = true;
-                    for(Carte c : colectie.getCarti()){
-                        if(c.getIsbn() == carteEditata.getIsbn()) {
-                            c.duplicareCarte(carteEditata);
+                    for(Carte carte : colectie.getCarti()){
+                        if(carte.getIsbn() == carteEditata.getIsbn()) {
+                            carte.duplicareCarte(carteEditata);
                             screen.displayMessage("Carte editata cu succes in colectia " + numeColectie);
                         }
                     }
@@ -187,7 +197,10 @@ public class InterfataUtilizator {
             for (Carte carte : colectie.getCarti()) {
                 if (carte.getTitlu().equalsIgnoreCase(titluCautat)) {
                     carteGasita = true;
+
+                    imprumutDatabase.stergeImprumuturiByCarte(carte);
                     colectie.getCarti().remove(carte);
+
                     screen.displayMessage("Cartea cu titlul " + titluCautat + " a fost ștearsă.");
                     break;
                 }
@@ -213,7 +226,7 @@ public class InterfataUtilizator {
                 screen.displayMessage("Colectia: " + colectie.getNumeColectie());
                 List<Carte> carti = colectie.getCarti();
                 for(Carte carte : carti) {
-                    screen.displayMessage("'" +carte.getTitlu() + "' de " + carte.getAutor());
+                    screen.displayMessage("'" +carte.getTitlu() + "' scrisa de " + carte.getAutor());
                 }
                 screen.displayMessage("");
             }
@@ -247,7 +260,7 @@ public class InterfataUtilizator {
                     screen.displayMessage("Titlu: " + carte.getTitlu());
                     screen.displayMessage("Autor: " + carte.getAutor());
                     screen.displayMessage("Editura: " + carte.getEditura());
-                    screen.displayMessage("An publicare: " + carte.getanPublicare());
+                    screen.displayMessage("An publicare: " + carte.getAnPublicare());
                     screen.displayMessage("Categorie: " + carte.getCategorie());
                     screen.displayMessage("ISBN: " +carte.getIsbn());
                     screen.displayMessage("Colectie: " +carte.getNumeColectie());
@@ -275,11 +288,11 @@ public class InterfataUtilizator {
                 imprumutDatabase.imprumutaCarte(carte, numeStudent);
             }
             else{
-                InterfataUtilizator.screen.displayMessage("Aceasta carte este deja imprumutata");
+                GestiuneBiblioteca.screen.displayMessage("Aceasta carte este deja imprumutata");
             }
         }
         catch (Exception e){
-            InterfataUtilizator.screen.displayMessage("Nu s-a gasit nicio carte care sa se potriveasca!");
+            GestiuneBiblioteca.screen.displayMessage("Nu s-a gasit nicio carte care sa se potriveasca!");
         }
     }
 
@@ -348,12 +361,11 @@ public class InterfataUtilizator {
                 case 1 -> raportCartiDupaAutor();
                 case 2 -> raportCartiDinColectie();
                 case 3 -> raportCartiImprumutateLaOAnumitaData();
-                case 4 -> raportCartiImprumutateInPrezent();
-                case 5 -> {
+                case 4 -> {
                     iesire = true;
                     start();
                 }
-                case 6 -> {
+                case 5 -> {
                     bibliotecaDatabase.salveazaDateleLaInchidereaAplicatiei(biblioteca);
                     imprumutDatabase.salveazaDateleLaInchidereaAplicatiei(biblioteca);
                     screen.displayMessage("Se inchide aplicatia");
@@ -378,7 +390,7 @@ public class InterfataUtilizator {
         if(cartiDupaAutor.isEmpty()) {
             screen.displayMessage("Nu s-au gasit carti scride de autorul " + autorCautat);
         } else {
-            screen.displayMessage("Carti scride de " + autorCautat + ":");
+            screen.displayMessage("Carti scrise de " + autorCautat + ":");
             for(Carte carte : cartiDupaAutor) {
                 screen.displayMessage("Titlu: " + carte.getTitlu());
             }
@@ -405,7 +417,7 @@ public class InterfataUtilizator {
             } else {
                 screen.displayMessage("Carti din colectia " + numeColectieCautata + ":");
                 for(Carte carte : cartiInColectie) {
-                    screen.displayMessage("'" + carte.getTitlu() + "' de " + carte.getAutor());
+                    screen.displayMessage("'" + carte.getTitlu() + "' scrisa de " + carte.getAutor());
                 }
             }
         }
@@ -430,20 +442,9 @@ public class InterfataUtilizator {
         } else {
             screen.displayMessage("Carti imprumutate la data de " + dataCautata);
             for(Carte carte : cartiImprumutateLaData) {
-                screen.displayMessage("'" + carte.getTitlu() + "' de " + carte.getAutor());
+                screen.displayMessage("'" + carte.getTitlu() + "' scrisa de " + carte.getAutor());
             }
         }
     }
-    //TODO
-    private void raportCartiImprumutateInPrezent() {
-        for(Colectie colectie : biblioteca.getColectii()) {
-            for(Carte carte : colectie.getCarti()) {
-                for(Imprumut imprumut : imprumutDatabase.getImprumuturiActive()) {
-                    if(imprumut.getDataReturnare().isEmpty()) {
-                        screen.displayMessage(imprumut.toString());
-                    }
-                }
-            }
-        }
-    }
+
 }

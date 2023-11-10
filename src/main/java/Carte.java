@@ -2,6 +2,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Clasa Carte reprezinta o carte in cadrul unei biblioteci, avand diverse atribute
+ */
 public class Carte {
 
     private String titlu;
@@ -13,6 +16,19 @@ public class Carte {
     private boolean esteImprumutata;
     private String numeColectie;
     private List<Imprumut> listaImprumuturi = new ArrayList<>();
+
+    /**
+     * Constructor pentru obiectul Carte
+     *
+     * @param titlu              Titlul cartii
+     * @param autor              Numele autorului
+     * @param editura            Numele editurii
+     * @param anPublicare        Anul publicarii
+     * @param categorie          Categorie/genul
+     * @param isbn               Codul ISBN
+     * @param esteImprumutata    Starea de imprumut
+     * @param numeColectie       Numele colectiei din care face parte
+     */
 
     public Carte(String titlu, String autor, String editura, int anPublicare, String categorie, long isbn, boolean esteImprumutata, String numeColectie) {
         this.titlu = titlu;
@@ -49,11 +65,11 @@ public class Carte {
         this.editura = editura;
     }
 
-    public int getanPublicare() {
+    public int getAnPublicare() {
         return anPublicare;
     }
 
-    public void setanPublicare(int anPublicare) {
+    public void setAnPublicare(int anPublicare) {
         this.anPublicare = anPublicare;
     }
 
@@ -97,19 +113,15 @@ public class Carte {
         this.numeColectie = numeColectie;
     }
 
+    /**
+     * Metoda pentru adaugarea unui imprumut la lista de imprumuturi a cartii
+     * @param imprumut  Obiectul imprumut care va fi adaugat
+     */
     public void adaugaImprumut(Imprumut imprumut) {
         listaImprumuturi.add(imprumut);
         if(imprumut.getDataReturnare().equals(null)) {
             esteImprumutata = true;
         }
-    }
-
-    public String detaliiImprumut() {
-        StringBuilder detalii = new StringBuilder("Imprumuturi pentru cartea '" + titlu + "':\n");
-        for(Imprumut imprumut : listaImprumuturi) {
-            detalii.append(imprumut.toString()).append("\n");
-        }
-        return detalii.toString();
     }
 
     public void duplicareCarte (Carte carteNoua) {

@@ -1,5 +1,3 @@
-Maria,maria,08.11.2023,09.11.2023
-Informatica,Antonia,08.11.2023,09.11.2023
-Informatica,Andrei,10.11.2023,10.11.2023
-Semnul,Mihaela,10.11.2023,10.11.2023
-Informatica,Ioana,10.11.2023,10.11.2023
+Finante,Ionela,06.11.2023,null
+Statistica: baze teoretice si aplicatii,Ionel,08.11.2023,null
+Clonarea informatica,Maria,11.11.2023,11.11.2023

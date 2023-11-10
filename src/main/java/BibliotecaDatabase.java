@@ -3,7 +3,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BibliotecaDatabase {
-    private String filePath = "src/main/resources/carti.txt";
+    private final String filePath = "src/main/resources/carti.txt";
     private Biblioteca biblioteca;
     private List<Carte> carti = new ArrayList<>();
 
@@ -14,10 +14,14 @@ public class BibliotecaDatabase {
 
     public List<Carte> citesteCarti() {
         List<Carte> carti = new ArrayList<>();
+
         try(BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             String linie;
+
             while((linie = reader.readLine()) != null) {
+
                 String[] dateCarte = linie.split(",");
+
                 if(dateCarte.length == 8) {
                     String titlu = dateCarte[0];
                     String autor = dateCarte[1];
@@ -27,6 +31,7 @@ public class BibliotecaDatabase {
                     long isbn = Long.parseLong(dateCarte[5].trim());
                     boolean esteImprumutata = Boolean.parseBoolean(dateCarte[6]);
                     String numeColectie = dateCarte[7];
+
                     Carte carte = new Carte(titlu,autor,editura,anPublicare,categorie,isbn,esteImprumutata,numeColectie);
                     carti.add(carte);
 
@@ -47,7 +52,7 @@ public class BibliotecaDatabase {
                 carte.getTitlu(),
                 carte.getAutor(),
                 carte.getEditura(),
-                String.valueOf(carte.getanPublicare()),
+                String.valueOf(carte.getAnPublicare()),
                 carte.getCategorie(),
                 String.valueOf(carte.getIsbn()),
                 String.valueOf(carte.esteImprumutata()),

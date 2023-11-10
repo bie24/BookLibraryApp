@@ -24,6 +24,7 @@ public class Keyboard implements Keypad {
             try {
                 var inputString = scanner.next();
                 input = Integer.parseInt(inputString);
+
             } catch (NumberFormatException e) {
                 screen.displayMessage("Formatul introdus este invalid. Incercati din nou!");
             }
@@ -62,10 +63,10 @@ public class Keyboard implements Keypad {
             try {
                 year = getInput();
                 if (isNotValidYear(year)) {
-                    throw new InvalidInputException("Formatul introdus este invalid. Incercati din nou!");
+                    throw new InvalidInputException("Formatul introdus este invalid. Introduceti un an valid (1930 - 2023)!");
                 }
             } catch (InvalidInputException e) {
-                screen.displayMessage("Formatul introdus este  invalid. Introduceti un an valid (1930 - 2023)!");
+                screen.displayMessage(e.getMessage());
             }
         } while (isNotValidYear(year));
 
@@ -95,19 +96,55 @@ public class Keyboard implements Keypad {
         return date;
     }
 
-    public long getLongInput(String message) {
-        screen.displayMessage(message + ": ");
-        var input = Long.MIN_VALUE;
+    public long getIsbnInput(String message) {
 
-        while (input == Long.MIN_VALUE) {
-            try {
-                var inputString = scanner.next();
-                input = Integer.parseInt(inputString);
-            } catch (NumberFormatException e) {
-                screen.displayMessage("Formatul introdus este invalid. Incercati din nou!");
+        long isbn = 0;
+        boolean validInput = false;
+       do {
+            screen.displayMessage(message + ": ");
+            String input = scanner.next();
+            try{
+                isbn = Long.parseLong(input);
+                if(isValidIsbn(Long.toString(isbn))) {
+                    validInput = true;
+                } else {
+                    screen.displayMessage("ISBN invalid. Incercati din nou!");
+                }
+            } catch(NumberFormatException e) {
+                screen.displayMessage("Formatul introdus este invalid. Incecati din nou!");
+            } catch (InvalidInputException e) {
+                screen.displayMessage(e.getMessage());
             }
+        } while(!validInput);
+
+        return isbn;
+    }
+
+    private boolean isValidIsbn(String isbn) {
+        if(!(isbn.length() == 10 || isbn.length() == 13)) {
+            return false;
         }
-        return input;
+        if(isbn.length() == 10) {
+            int sum = 0;
+            for(int i = 0; i < 9; i++) {
+                sum += (10-i) * Character.getNumericValue(isbn.charAt(i));
+            }
+            char ultimulChar = isbn.charAt(9);
+            int ultimaCifra = Character.getNumericValue(ultimulChar);
+
+            return (sum+ultimaCifra)%11 == 0;
+        }
+
+        if(isbn.length() == 13) {
+            int sum = 0;
+            for(int i = 0; i < 12; i++) {
+                int cifra = Character.getNumericValue(isbn.charAt(i));
+                sum += (i%2 == 0) ? cifra : 3*cifra;
+            }
+            int verificaCifra = Character.getNumericValue(isbn.charAt(12));
+            return (sum+verificaCifra)%10 == 0;
+        }
+        return false;
     }
 
     public boolean getBooleanInput(String message) {
